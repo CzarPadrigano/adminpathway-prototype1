@@ -4,14 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Filter, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import ApplicationCard from "@/components/applications/ApplicationCard";
 
 const Applications = () => {
   const { toast } = useToast();
@@ -23,6 +16,14 @@ const Applications = () => {
       duration: 3000,
     });
   };
+
+  const applications = [1, 2, 3, 4, 5].map((i) => ({
+    id: `A2024${i.toString().padStart(4, '0')}`,
+    name: `Juan Dela Cruz ${i}`,
+    program: "BS Psychology",
+    status: "Pending Review",
+    date: `March ${i + 10}, 2024`
+  }));
 
   return (
     <div className="space-y-6">
@@ -66,67 +67,8 @@ const Applications = () => {
               </tr>
             </thead>
             <tbody>
-              {[1, 2, 3, 4, 5].map((i) => (
-                <tr key={i} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="py-3 px-4">
-                    <div>
-                      <p className="font-medium">Juan Dela Cruz {i}</p>
-                      <p className="text-sm text-gray-600">ID: A2024{i.toString().padStart(4, '0')}</p>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4">BS Psychology</td>
-                  <td className="py-3 px-4">
-                    <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-full">
-                      Pending Review
-                    </span>
-                  </td>
-                  <td className="py-3 px-4">March {i + 10}, 2024</td>
-                  <td className="py-3 px-4">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm">
-                          View Details
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Application Details</DialogTitle>
-                          <DialogDescription>
-                            <div className="mt-4 space-y-4">
-                              <div>
-                                <h3 className="font-semibold">Personal Information</h3>
-                                <p>Name: Juan Dela Cruz {i}</p>
-                                <p>Application ID: A2024{i.toString().padStart(4, '0')}</p>
-                                <p>Program: BS Psychology</p>
-                                <p>Status: Pending Review</p>
-                              </div>
-                              <div>
-                                <h3 className="font-semibold">Academic Background</h3>
-                                <p>High School: Sample High School</p>
-                                <p>GPA: 90.5</p>
-                              </div>
-                              <div className="pt-4 flex justify-end space-x-2">
-                                <Button variant="outline">Reject</Button>
-                                <Button 
-                                  className="bg-plp-green hover:bg-plp-green/90"
-                                  onClick={() => {
-                                    toast({
-                                      title: "Application Approved",
-                                      description: "The application has been approved successfully",
-                                      duration: 3000,
-                                    });
-                                  }}
-                                >
-                                  Approve
-                                </Button>
-                              </div>
-                            </div>
-                          </DialogDescription>
-                        </DialogHeader>
-                      </DialogContent>
-                    </Dialog>
-                  </td>
-                </tr>
+              {applications.map((application) => (
+                <ApplicationCard key={application.id} {...application} />
               ))}
             </tbody>
           </table>
