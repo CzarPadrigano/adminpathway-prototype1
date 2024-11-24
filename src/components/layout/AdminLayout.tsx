@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate, Outlet } from "react-router-dom";
 import { 
   LayoutDashboard, 
   Users, 
@@ -9,9 +9,23 @@ import {
   Settings,
   LogOut
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -21,6 +35,15 @@ const Sidebar = () => {
     { icon: CheckSquare, label: "Decisions", path: "/decisions" },
     { icon: Settings, label: "Settings", path: "/settings" },
   ];
+
+  const handleLogout = () => {
+    toast({
+      title: "Logged out successfully",
+      description: "You have been logged out of the system",
+      duration: 3000,
+    });
+    navigate("/login");
+  };
 
   return (
     <div className="h-screen w-64 bg-white border-r border-gray-200 fixed left-0 top-0">
@@ -62,10 +85,28 @@ const Sidebar = () => {
         </nav>
         
         <div className="p-4 border-t border-gray-200">
-          <button className="flex items-center space-x-3 text-gray-600 hover:text-red-600 w-full px-4 py-2.5 rounded-lg transition-colors">
-            <LogOut size={20} />
-            <span>Logout</span>
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="flex items-center space-x-3 text-gray-600 hover:text-red-600 w-full px-4 py-2.5 rounded-lg transition-colors">
+                <LogOut size={20} />
+                <span>Logout</span>
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure you want to logout?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  You will be redirected to the login page.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleLogout}>
+                  Logout
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>
@@ -90,18 +131,14 @@ const Header = () => {
   );
 };
 
-interface AdminLayoutProps {
-  children: React.ReactNode;
-}
-
-const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
+const AdminLayout = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
       <Header />
       <main className="pl-64 pt-16 min-h-screen">
         <div className="p-6 animate-fadeIn">
-          {children}
+          <Outlet />
         </div>
       </main>
     </div>

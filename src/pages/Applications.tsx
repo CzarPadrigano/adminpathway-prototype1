@@ -3,15 +3,37 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Filter, Download } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const Applications = () => {
+  const { toast } = useToast();
+
+  const handleExport = () => {
+    toast({
+      title: "Export Successful",
+      description: "The data has been exported successfully",
+      duration: 3000,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">
           Applications Management
         </h1>
-        <Button className="bg-plp-green hover:bg-plp-green/90">
+        <Button 
+          className="bg-plp-green hover:bg-plp-green/90"
+          onClick={handleExport}
+        >
           <Download className="mr-2 h-4 w-4" />
           Export Data
         </Button>
@@ -60,9 +82,49 @@ const Applications = () => {
                   </td>
                   <td className="py-3 px-4">March {i + 10}, 2024</td>
                   <td className="py-3 px-4">
-                    <Button variant="outline" size="sm">
-                      View Details
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          View Details
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Application Details</DialogTitle>
+                          <DialogDescription>
+                            <div className="mt-4 space-y-4">
+                              <div>
+                                <h3 className="font-semibold">Personal Information</h3>
+                                <p>Name: Juan Dela Cruz {i}</p>
+                                <p>Application ID: A2024{i.toString().padStart(4, '0')}</p>
+                                <p>Program: BS Psychology</p>
+                                <p>Status: Pending Review</p>
+                              </div>
+                              <div>
+                                <h3 className="font-semibold">Academic Background</h3>
+                                <p>High School: Sample High School</p>
+                                <p>GPA: 90.5</p>
+                              </div>
+                              <div className="pt-4 flex justify-end space-x-2">
+                                <Button variant="outline">Reject</Button>
+                                <Button 
+                                  className="bg-plp-green hover:bg-plp-green/90"
+                                  onClick={() => {
+                                    toast({
+                                      title: "Application Approved",
+                                      description: "The application has been approved successfully",
+                                      duration: 3000,
+                                    });
+                                  }}
+                                >
+                                  Approve
+                                </Button>
+                              </div>
+                            </div>
+                          </DialogDescription>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
                   </td>
                 </tr>
               ))}

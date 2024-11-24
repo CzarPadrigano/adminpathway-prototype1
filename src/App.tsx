@@ -2,8 +2,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminLayout from "./components/layout/AdminLayout";
+import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Applications from "./pages/Applications";
 import Examinations from "./pages/Examinations";
@@ -19,16 +20,18 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AdminLayout>
-          <Routes>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route element={<AdminLayout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/applications" element={<Applications />} />
             <Route path="/examinations" element={<Examinations />} />
             <Route path="/interviews" element={<Interviews />} />
             <Route path="/decisions" element={<Decisions />} />
             <Route path="/settings" element={<Settings />} />
-          </Routes>
-        </AdminLayout>
+          </Route>
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
