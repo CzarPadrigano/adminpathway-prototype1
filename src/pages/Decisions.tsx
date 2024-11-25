@@ -2,8 +2,27 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Decisions = () => {
+  const { toast } = useToast();
+
+  const handleAccept = (id: number) => {
+    toast({
+      title: "Application Accepted",
+      description: `Application ${id} has been accepted`,
+      duration: 3000,
+    });
+  };
+
+  const handleReject = (id: number) => {
+    toast({
+      title: "Application Rejected",
+      description: `Application ${id} has been rejected`,
+      duration: 3000,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -52,10 +71,18 @@ const Decisions = () => {
                 </div>
               </div>
               <div className="flex space-x-2">
-                <Button variant="outline" className="border-green-500 text-green-500 hover:bg-green-50">
+                <Button 
+                  variant="outline" 
+                  className="border-green-500 text-green-500 hover:bg-green-50"
+                  onClick={() => handleAccept(i)}
+                >
                   Accept
                 </Button>
-                <Button variant="outline" className="border-red-500 text-red-500 hover:bg-red-50">
+                <Button 
+                  variant="outline" 
+                  className="border-red-500 text-red-500 hover:bg-red-50"
+                  onClick={() => handleReject(i)}
+                >
                   Reject
                 </Button>
               </div>
