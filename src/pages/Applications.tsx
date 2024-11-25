@@ -1,13 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Filter, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import ApplicationCard from "@/components/applications/ApplicationCard";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Applications = () => {
   const { toast } = useToast();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const handleExport = () => {
     toast({
@@ -24,6 +33,11 @@ const Applications = () => {
     status: "Pending Review",
     date: `March ${i + 10}, 2024`
   }));
+
+  const filteredApplications = applications.filter(app => 
+    app.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    (!statusFilter || app.status === statusFilter)
+  );
 
   return (
     <div className="space-y-6">
@@ -47,12 +61,21 @@ const Applications = () => {
             <Input 
               placeholder="Search applications..." 
               className="pl-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button variant="outline" className="sm:w-auto">
-            <Filter className="mr-2 h-4 w-4" />
-            Filters
-          </Button>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">All Status</SelectItem>
+              <SelectItem value="Pending Review">Pending Review</SelectItem>
+              <SelectItem value="Approved">Approved</SelectItem>
+              <SelectItem value="Rejected">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="overflow-x-auto">
@@ -67,7 +90,7 @@ const Applications = () => {
               </tr>
             </thead>
             <tbody>
-              {applications.map((application) => (
+              {filteredApplications.map((application) => (
                 <ApplicationCard key={application.id} {...application} />
               ))}
             </tbody>
@@ -76,7 +99,7 @@ const Applications = () => {
 
         <div className="mt-4 flex items-center justify-between">
           <p className="text-sm text-gray-600">
-            Showing 1-5 of 100 applications
+            Showing {filteredApplications.length} of {applications.length} applications
           </p>
           <div className="flex items-center space-x-2">
             <Button variant="outline" size="sm" disabled>
