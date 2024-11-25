@@ -1,12 +1,23 @@
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { CheckCircle, XCircle, Clock, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Decisions = () => {
   const { toast } = useToast();
   const [filter, setFilter] = useState<'all' | 'pending' | 'accepted' | 'rejected'>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [courseFilter, setCourseFilter] = useState("all");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const handleAccept = (id: number) => {
     toast({
@@ -26,16 +37,32 @@ const Decisions = () => {
 
   const decisions = [1, 2, 3, 4, 5].map((i) => ({
     id: i,
-    name: `Juan Dela Cruz ${i}`,
-    program: "BS Psychology",
+    firstName: `Juan`,
+    lastName: `Dela Cruz ${String.fromCharCode(65 + i)}`, // Different last names for sorting
+    program: i % 2 === 0 ? "BS Psychology" : "BS Information Technology",
     examScore: 85 + i,
     interviewStatus: "Passed",
     status: i % 3 === 0 ? 'pending' : i % 3 === 1 ? 'accepted' : 'rejected'
   }));
 
-  const filteredDecisions = decisions.filter(d => 
-    filter === 'all' || d.status === filter
-  );
+  const courses = [...new Set(decisions.map(d => d.program))];
+
+  // Filter and sort logic
+  const filteredDecisions = decisions
+    .filter(d => 
+      // Status filter
+      (filter === 'all' || d.status === filter) &&
+      // Search query
+      (`${d.firstName} ${d.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+       d.program.toLowerCase().includes(searchQuery.toLowerCase())) &&
+      // Course filter
+      (courseFilter === "all" || d.program === courseFilter)
+    )
+    .sort((a, b) => {
+      // Sort by last name
+      const comparison = a.lastName.localeCompare(b.lastName);
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
 
   return (
     <div className="space-y-6">
@@ -70,6 +97,45 @@ const Decisions = () => {
 
       <Card className="p-6">
         <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Search Bar */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Input
+                placeholder="Search by name or program..."
+                className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            
+            {/* Course Filter */}
+            <Select value={courseFilter} onValueChange={setCourseFilter}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Filter by program" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Programs</SelectItem>
+                {courses.map((course) => (
+                  <SelectItem key={course} value={course}>
+                    {course}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Sort Order */}
+            <Select value={sortOrder} onValueChange={(value: "asc" | "desc") => setSortOrder(value)}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Sort by last name" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="asc">A-Z</SelectItem>
+                <SelectItem value="desc">Z-A</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           {filteredDecisions.map((decision) => (
             <div 
               key={decision.id} 
@@ -77,10 +143,10 @@ const Decisions = () => {
             >
               <div className="flex items-center space-x-4">
                 <div className="h-12 w-12 rounded-full bg-plp-green text-white flex items-center justify-center">
-                  {decision.id}
+                  {decision.firstName[0]}
                 </div>
                 <div>
-                  <p className="font-medium">{decision.name}</p>
+                  <p className="font-medium">{decision.firstName} {decision.lastName}</p>
                   <p className="text-sm text-gray-600">{decision.program}</p>
                   <div className="flex items-center mt-1">
                     <span className="text-sm text-gray-600">
