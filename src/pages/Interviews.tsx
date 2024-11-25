@@ -1,18 +1,59 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
+import InterviewScheduleDialog from "@/components/interviews/InterviewScheduleDialog";
+import InterviewCard from "@/components/interviews/InterviewCard";
 
 const Interviews = () => {
+  const todayInterviews = [
+    {
+      id: 1,
+      applicantName: "Juan Dela Cruz 1",
+      program: "BS Psychology",
+      time: "9:00 AM",
+      interviewer: "Dr. Santos"
+    },
+    {
+      id: 2,
+      applicantName: "Juan Dela Cruz 2",
+      program: "BS Psychology",
+      time: "10:00 AM",
+      interviewer: "Dr. Cruz"
+    },
+    {
+      id: 3,
+      applicantName: "Juan Dela Cruz 3",
+      program: "BS Psychology",
+      time: "11:00 AM",
+      interviewer: "Dr. Reyes"
+    }
+  ];
+
+  const upcomingSchedule = [
+    {
+      id: 1,
+      date: "March 15, 2024",
+      count: 5
+    },
+    {
+      id: 2,
+      date: "March 16, 2024",
+      count: 3
+    },
+    {
+      id: 3,
+      date: "March 17, 2024",
+      count: 4
+    }
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">
           Interview Management
         </h1>
-        <Button className="bg-plp-green hover:bg-plp-green/90">
-          Schedule Interviews
-        </Button>
+        <InterviewScheduleDialog />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -21,27 +62,8 @@ const Interviews = () => {
             Today's Interviews
           </h3>
           <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div 
-                key={i} 
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="h-10 w-10 rounded-full bg-plp-green text-white flex items-center justify-center">
-                    {i}
-                  </div>
-                  <div>
-                    <p className="font-medium">Juan Dela Cruz {i}</p>
-                    <p className="text-sm text-gray-600">BS Psychology</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium">9:{i}0 AM</p>
-                  <Button variant="outline" size="sm" className="mt-2">
-                    Start
-                  </Button>
-                </div>
-              </div>
+            {todayInterviews.map((interview) => (
+              <InterviewCard key={interview.id} {...interview} />
             ))}
           </div>
         </Card>
@@ -51,21 +73,18 @@ const Interviews = () => {
             Upcoming Schedule
           </h3>
           <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
+            {upcomingSchedule.map((schedule) => (
               <div 
-                key={i} 
+                key={schedule.id} 
                 className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
               >
                 <div>
                   <div className="flex items-center text-gray-600">
                     <Calendar className="h-4 w-4 mr-2" />
-                    <span>March {i + 14}, 2024</span>
+                    <span>{schedule.date}</span>
                   </div>
-                  <p className="font-medium mt-1">5 interviews scheduled</p>
+                  <p className="font-medium mt-1">{schedule.count} interviews scheduled</p>
                 </div>
-                <Button variant="outline" size="sm">
-                  View
-                </Button>
               </div>
             ))}
           </div>
